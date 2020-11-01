@@ -1,3 +1,4 @@
+from location import Location
 from typing import List
 from delivery import Delivery
 import config as cfg
@@ -33,31 +34,15 @@ def get_closest_next_location(current_address, pending_deliveries):
     distance_to_next_location = None
     for next_delivery_address in pending_deliveries:
         next_location_distance = distance_to_next_location
-        calculated_distance = get_distance(current_address, next_delivery_address)
+        calculated_distance = get_distance(current_address, next_delivery_address.location.address)
         if (
-            next_location_distance is None
-            or next_location_distance > calculated_distance
+            next_location_distance is None or next_location_distance > calculated_distance
         ):
             distance_to_next_location = (next_delivery_address, calculated_distance)
     return distance_to_next_location
 
 
-def get_miles_closest_delivery_in_route(delivery, delivery_route_list=[]):
-    if len(delivery_route_list) == 0:
-        return get_distance(delivery.address, cfg.starting_location.address)
-    closest_delivery = delivery_route_list[0]
-    closest_delivery_distance = get_distance(delivery.address, closest_delivery.address)
-
-    for route_delivery in delivery_route_list:
-        distance = get_distance(delivery.address, route_delivery.address)
-        if distance < closest_delivery_distance:
-            closest_delivery = route_delivery
-            closest_delivery_distance = distance
-
-    return closest_delivery_distance
-
-
-def get_miles_of_route(delivery_list: List[Delivery]):
+def get_miles_of_route(starting_location: Location, delivery_list, return_to_depot=False):
     """
     ### Parameters
     1. delivery_list: List[Delivery]
@@ -68,16 +53,15 @@ def get_miles_of_route(delivery_list: List[Delivery]):
     """
     total_miles = 0
     for index, delivery in enumerate(delivery_list):
+        origin = None
         if index == 0:
-            new_miles = get_distance(
-                cfg.starting_location.address, delivery.location.address
-            )
-            continue
-        elif index == len(delivery_list) - 1:
-            break
+            origin = starting_location.address
         else:
-            new_miles = get_distance(
-                delivery.location.address, delivery_list[index + 1].location.address
-            )
+            origin = delivery_list[index - 1].location.address
+        dest = delivery.location.address
+        new_miles = get_distance(origin, dest)
         total_miles += new_miles
+    if return_to_depot:
+        return_to_depot_distance = get_distance(delivery_list[-1].location.address, starting_location.address)
+        total_miles += return_to_depot_distance
     return total_miles

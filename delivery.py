@@ -5,12 +5,16 @@ from typing import List
 
 
 class Delivery:
+    class_counter = 0
+
     def __init__(self, location, packages=[]):
+        Delivery.class_counter += 1
         self.location: Location = location
         self.packages: List[Package] = packages
         self.assigned_truck = None
         self.delivered_time = None
         self.delivered: bool = False
+        self.id = Delivery.class_counter
 
     def add_package(self, package):
         self.packages.append(package)
@@ -19,6 +23,7 @@ class Delivery:
         return len([package for package in self.packages if package.id == _id]) > 0
 
     def set_assigned_truck(self, num):
+        self.assigned_truck = num
         for package in self.packages:
             package.assigned_truck = num
 
@@ -53,10 +58,7 @@ def get_deliveries_with_unassigned_trucks():
     deliveries_with_unassigned_packages = []
     for delivery in cfg.deliveries:
         for package in delivery.packages:
-            if (
-                package.assigned_truck is None
-                and delivery not in deliveries_with_unassigned_packages
-            ):
+            if (package.assigned_truck is None and delivery not in deliveries_with_unassigned_packages):
                 deliveries_with_unassigned_packages.append(delivery)
     return deliveries_with_unassigned_packages
 

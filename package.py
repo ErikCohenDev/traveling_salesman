@@ -13,3 +13,7 @@ class Package:
 
 def get_package_by_id(_id):
     return [package for package in cfg.packages if package.id == _id][0]
+
+
+def get_packages_with_unassigned_trucks():
+    return [package for package in cfg.packages if package.assigned_truck is None]
