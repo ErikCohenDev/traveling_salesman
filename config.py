@@ -28,9 +28,11 @@ def init(
     starting_location = init_locations[0]
     day_start = datetime.today().strptime("08:00:00", "%H:%M:%S")
     app_time = day_start.time()
-    print("The Day has started it is 08:00:00")
 
 
 def add_an_hour_to_global_time():
     global app_time
+    truck = trucks[1]
+    if not truck.completed_route:
+        truck.an_hour_passed()
     app_time = app_time.replace(hour=app_time.hour + 1)

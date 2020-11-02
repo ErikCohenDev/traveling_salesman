@@ -15,8 +15,7 @@ class CLI:
     1. packages
     2. deliveries
     3. trucks
-    4. quit application"""
-        )
+    4. quit application""")
 
     def show_packages_prompt(self):
         print(
@@ -25,8 +24,7 @@ class CLI:
     1. Show all delivered packages and their delivery times
     2. show all undelivered packages
     3. show all packages
-    4. return to main menu"""
-        )
+    4. return to main menu""")
 
     def show_deliveries_prompt(self):
         print(
@@ -45,8 +43,7 @@ class CLI:
     1. packages
     2. deliveries
     3. trucks
-    4. return to main menu"""
-        )
+    4. return to main menu""")
 
     def run(self):
         while self.running:

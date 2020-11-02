@@ -28,10 +28,11 @@ def main():
 
     distribute_deliveries_to_trucks(non_restricted_deliveries)
 
-    restricted_deliveries = get_deliveries_with_restrictions()
-
     deliveries_that_must_go_on_truck_2 = get_deliveries_from_package_id_list(cfg.packages_that_must_be_on_truck_2)
     truck2.assign_deliveries(deliveries_that_must_go_on_truck_2)
+
+    truck = cfg.trucks[1]
+    truck.start_delivering(cfg.app_time)
 
     while (running):
         option = input("press the 1 to ff an hour: \n")

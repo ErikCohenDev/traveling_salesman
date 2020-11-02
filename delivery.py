@@ -27,6 +27,10 @@ class Delivery:
         for package in self.packages:
             package.assigned_truck = num
 
+    def mark_as_delivered(self, time_delivered):
+        self.delivered_time = time_delivered
+        self.delivered = True
+
 
 def create_deliveries():
     deliveries: List[Delivery] = []
