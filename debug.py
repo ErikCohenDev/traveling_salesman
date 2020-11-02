@@ -33,7 +33,9 @@ def print_package_count_by_truck():
 
 
 def print_package_table():
-    print("id | Address                                | Truck      |  Deadline                | Notes ")
+    print("___________________________________________________________________")
+    print("____________________________PACKAGES_______________________________")
+    print("id | Address                                | Truck      | Deadline | Notes ")
     for package in cfg.packages:
         # Pad the strings to take the same amount of space
         package_id = "{:<2}".format(package.id)
@@ -46,14 +48,29 @@ def print_package_table():
         package_deadline = package.deadline.strftime("%H:%M %p")
         package_notes = package.notes if package.notes is not False else "N/A"
         print(
-            f"{package_id} | {package_address} | {package_truck} | \
-                {package_deadline} | {package_notes}"
+            f"{package_id} | {package_address} | {package_truck} | {package_deadline} | {package_notes}"
         )
 
 
-def print_delivery_table():
-    # TODO Implement
-    pass
+def print_delivery_table(deliveries_list):
+    print("_____________________________________________________________________")
+    print("____________________________DELIVERIES_______________________________")
+    print("id | Address                                | Truck      | packages |")
+    for delivery in deliveries_list:
+        # Pad the strings to take the same amount of space
+        delivery_id = "{:<2}".format(delivery.id)
+        delivery_address = "{:<38}".format(delivery.location.address)
+        delivery_truck = (
+            "{:<10}".format(delivery.assigned_truck)
+            if delivery.assigned_truck is not None
+            else "unassigned"
+        )
+        packages = "{:<8}".format(','.join([str(package.id) for package in delivery.packages]))
+        delivery_notes = ''  # delivery.notes if delivery.notes is not False else "N/A"
+        print(
+            f"{delivery_id} | {delivery_address} | {delivery_truck} | {packages} |"
+        )
+    print("_____________________________________________________________________")
 
 
 def print_truck_table():

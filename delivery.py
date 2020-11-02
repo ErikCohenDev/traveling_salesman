@@ -5,16 +5,16 @@ from typing import List
 
 
 class Delivery:
-    class_counter = 0
+    _class_counter = 0
 
     def __init__(self, location, packages=[]):
-        Delivery.class_counter += 1
+        Delivery._class_counter += 1
         self.location: Location = location
         self.packages: List[Package] = packages
         self.assigned_truck = None
         self.delivered_time = None
         self.delivered: bool = False
-        self.id = Delivery.class_counter
+        self.id = Delivery._class_counter
 
     def add_package(self, package):
         self.packages.append(package)
@@ -68,3 +68,34 @@ def get_number_of_packages_for_delivery_list(delivery_list):
     for delivery in delivery_list:
         packages_count += len(delivery.packages)
     return packages_count
+
+
+def filter_deliveries_with_package_id_list(package_id_list):
+    deliveries_without_filter = []
+    for delivery in cfg.deliveries:
+        check_if_contains_filter = any([package for package in delivery.packages if package.id in package_id_list])
+        if check_if_contains_filter:
+            deliveries_without_filter.append(delivery)
+    return deliveries_without_filter
+
+
+def get_deliveries_without_restrictions():
+    deliveries_without_filter = []
+    for delivery in cfg.deliveries:
+        check_if_has_restriction = any(
+            [package for package in delivery.packages if package.id in cfg.packages_restrictions]
+        )
+        if not check_if_has_restriction:
+            deliveries_without_filter.append(delivery)
+    return deliveries_without_filter
+
+
+def get_deliveries_with_restrictions():
+    deliveries_without_filter = []
+    for delivery in cfg.deliveries:
+        check_if_has_restriction = any(
+            [package for package in delivery.packages if package.id in cfg.packages_restrictions]
+        )
+        if check_if_has_restriction:
+            deliveries_without_filter.append(delivery)
+    return deliveries_without_filter

@@ -1,9 +1,11 @@
+import debug as dbg
+
+
 class CLI:
     running = False
 
     def __init__(self, packages):
         self.running = True
-        self.packages = packages
         self.run()
 
     def show_main_menu_prompt(self):
@@ -85,31 +87,7 @@ class CLI:
             print("No packages have been delivered")
 
     def display_undelivered_packages(self):
-        count = 0
-        print(
-            "id | Address                                | Truck      | \
-                Deadline | Notes "
-        )
-        for package in self.packages:
-            if not package.delivered:
-                count += 1
-
-                # Pad the strings to take the same amount of space
-                package_id = "{:<2}".format(package.id)
-                package_address = "{:<38}".format(package.address)
-                package_truck = (
-                    "{:<10}".format(package.assigned_truck)
-                    if package.assigned_truck is not None
-                    else "unassigned"
-                )
-                package_deadline = package.deadline.strftime("%H:%M %p")
-                package_notes = package.notes if package.notes is not False else "N/A"
-                print(
-                    f"{package_id} | {package_address} | {package_truck} | \
-                        {package_deadline} | {package_notes}"
-                )
-        if count == 0:
-            print("All packages have been delivered")
+        pass
 
     def display_all_packages(self):
         pass
