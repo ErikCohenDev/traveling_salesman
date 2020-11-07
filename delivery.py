@@ -28,6 +28,7 @@ class Delivery:
             package.assigned_truck = num
 
     def mark_as_delivered(self, time_delivered):
+        print(f"delivered packages to {self.location.address} at {time_delivered}")
         self.delivered_time = time_delivered
         self.delivered = True
 

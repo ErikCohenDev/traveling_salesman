@@ -14,26 +14,32 @@ from typing import List
 class Route:
     starting_location: Location
     _miles_driven = 0
-    _miles_driven_up_to_previous_location = 0
-    _current_location = None
     _departure_time = None
 
     def __init__(self):
         self.deliveries: List[Delivery] = []
         self.starting_location = cfg.starting_location
-        self._current_location = self.starting_location
         self._route: List[Location] = []
         self._route.append(self.starting_location)
+        self._current_location = self.starting_location
         self.minutes_driving = 0
-        self.last_delivery_timestamp = cfg.app_time
+        self.route_complete = False
+        self.time_route_complete = None
 
-    def get_next_location(self):
-        current_location_idx = self._route.index(self._current_location)
-        try:
-            next_location = self._route[current_location_idx + 1]
-        except IndexError:
-            return None
-        return next_location
+    def get_current_location(self):
+        if self._miles_driven == 0:
+            return self._route[0]
+        if self.route_complete is True:
+            return self._route[-1]
+
+        miles_driven_accumulator = 0
+        for loc_idx, location in enumerate(self._route):
+            delivered_location = self._route[loc_idx + 1]
+            delivery = self.deliveries[loc_idx]
+            driven_distance = get_distance(location.address, delivered_location.address)
+            if miles_driven_accumulator + driven_distance > self._miles_driven:
+                return delivered_location
+            miles_driven_accumulator += driven_distance
 
     def get_miles(self):
         return get_miles_of_route(self.starting_location, self.deliveries)
@@ -51,22 +57,29 @@ class Route:
         self.deliveries += deliveries_list
 
     def get_next_delivery(self):
-        next_location = self.get_next_location()
-        if next_location is None:
+        try:
+            return next(delivery for delivery in self.deliveries if delivery.delivered is False)
+        except StopIteration:
             return None
-        next_delivery = next(x for x in self.deliveries if x.location == next_location)
-        return next_delivery
 
     def get_miles_left(self):
-        current_location_idx = self._route.index(self._current_location)
+        if not self.get_next_delivery():
+            return 0
+        current_location = self._current_location
+        current_location_idx = self._route.index(current_location)
         miles_left = 0
         for loc_idx, location in enumerate(self._route[current_location_idx:]):
             try:
                 miles_left += get_distance(location.address, self._route[loc_idx + 1].address)
             except IndexError:
-                if miles_left == 0:
-                    return None
-                return miles_left
+                return round(miles_left, 2)
+        return round(miles_left, 2)
+
+    def added_distance_from_delivery_list(self, delivery_list):
+        added_distance = 0
+        for delivery in delivery_list:
+            added_distance = self.added_distance(delivery)
+        return added_distance
 
     def added_distance(self, delivery_to_measure: Delivery):
         if len(self.deliveries) == 0:
@@ -90,7 +103,7 @@ class Route:
                 self._route.append(delivery.location)
 
     def is_route_complete(self):
-        return self.get_next_location() is None
+        return self.route_complete or self.get_next_location() is None
 
     def get_miles_to_next_location(self):
         next_location = self.get_next_location()
@@ -101,36 +114,36 @@ class Route:
     def miles_to_minutes(self, miles):
         return miles / 0.3  # 18MPH / 60 mins
 
-    def advance_to_next_location(self):
-        miles_to_next_location = self.get_miles_to_next_location()
-        self._miles_driven_up_to_previous_location = self._miles_driven_up_to_previous_location + miles_to_next_location
-        next_delivery = self.get_next_delivery()
+    def miles_traveled_time_delivered(self, miles):
+        minutes_to_add = self.miles_to_minutes(miles)
+        dt_delivered = datetime.combine(datetime.today(), self._departure_time) + timedelta(minutes=minutes_to_add)
+        return dt_delivered.time()
 
-        minutes_to_add = self.miles_to_minutes(miles_to_next_location)
-        self.last_delivery_timestamp = (
-            datetime.combine(datetime.today(), self.last_delivery_timestamp) + timedelta(minutes=minutes_to_add)
-        ).time()
+    def return_to_base(self, truck_id, new_miles_driven):
+        drive_distance = get_distance(self._current_location.address, self.starting_location.address)
+        self._miles_driven += drive_distance
+        timestamp = self.miles_traveled_time_delivered(self._miles_driven)
+        self._current_location = self.starting_location
+        self.time_route_complete = timestamp
+        print(f'Truck {truck_id} back at base at', timestamp)
 
-        print(f"delivered packages to {next_delivery.location.address} at {self.last_delivery_timestamp}")
+    def advance_by_miles(self, new_miles_driven):
+        miles_driven_acc = self._miles_driven
+        self._miles_driven += new_miles_driven
 
-        next_delivery.mark_as_delivered(self.last_delivery_timestamp)
-        self._current_location = self.get_next_location()
-
-    def new_miles_driven(self, hourly_miles_driven):
-        miles_to_next_location = self.get_miles_to_next_location()
-
-        # Push current location forward 18 miles
-
-        end_of_hour_miles = self._miles_driven + hourly_miles_driven
-        distance_to_next_location = self.get_miles_to_next_location()
-        delivery_distance_miles = self._miles_driven + distance_to_next_location
-
-        while delivery_distance_miles <= end_of_hour_miles:
-            miles_to_next_location = self.get_miles_to_next_location()
-            # Route has completed
-            if miles_to_next_location is None:
+        while self.get_next_delivery():
+            next_delivery = self.get_next_delivery()
+            drive_distance = get_distance(self._current_location.address, next_delivery.location.address)
+            if miles_driven_acc + drive_distance > self._miles_driven:
                 break
-            self.advance_to_next_location()
+            miles_driven_acc += drive_distance
+            timestamp = self.miles_traveled_time_delivered(miles_driven_acc)
+            next_delivery.mark_as_delivered(timestamp)
+            self._current_location = next_delivery.location
+
+        if self.get_next_delivery() is None:
+            self._current_location = self.deliveries[-1].location
+            self.route_complete = True
 
 
 def calculate_route(deliveries):

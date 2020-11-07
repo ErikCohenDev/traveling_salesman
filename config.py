@@ -32,7 +32,4 @@ def init(
 
 def add_an_hour_to_global_time():
     global app_time
-    truck = trucks[1]
-    if not truck.completed_route:
-        truck.an_hour_passed()
     app_time = app_time.replace(hour=app_time.hour + 1)

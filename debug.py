@@ -74,10 +74,25 @@ def print_delivery_table(deliveries_list):
 
 
 def print_truck_table():
-    # TODO Implement
-    pass
+    print("_____________________________________________________________________")
+    print("______________________________Trucks_________________________________")
+    print("id | Current Location                       | Deliveries | Packages |")
+    for truck in cfg.trucks:
+        # Pad the strings to take the same amount of space
+        truck_id = "{:<2}".format(truck.id)
+        truck_location = "{:<38}".format(truck.route._current_location.address)
+        deliveries_assigned = "{:<10}".format(len(truck.route.deliveries))
+        packages_assigned = "{:<8}".format(sum(len(delivery.packages) for delivery in truck.route.deliveries))
+        print(
+            f"{truck_id} | {truck_location} | {deliveries_assigned} | {packages_assigned} |"
+        )
+    print("_____________________________________________________________________")
 
 
 def print_route_table():
-    # TODO Implement
-    pass
+    print("_____________________________________________________________________")
+    print("______________________________Routes_________________________________")
+    for truck in cfg.trucks:
+        print(f'Route assigned to truck {truck.id}')
+        for delivery in truck.route.deliveries:
+            print(f' |- {delivery.location.address}')
