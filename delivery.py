@@ -16,8 +16,14 @@ class Delivery:
         self.delivered: bool = False
         self.id = Delivery._class_counter
 
+    def earliest_deadline(self):
+        return min([package.deadline.time() for package in self.packages if package.deadline.time()])
+
     def add_package(self, package):
         self.packages.append(package)
+
+    def remove_package(self, package):
+        self.packages.remove(package)
 
     def has_package_id(self, _id):
         return len([package for package in self.packages if package.id == _id]) > 0
@@ -104,3 +110,7 @@ def get_deliveries_with_restrictions():
         if check_if_has_restriction:
             deliveries_without_filter.append(delivery)
     return deliveries_without_filter
+
+
+def get_delivery_from_address(address):
+    return [delivery for delivery in cfg.deliveries if delivery.location.address == address][0]

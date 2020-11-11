@@ -53,9 +53,9 @@ def print_package_table():
 
 
 def print_delivery_table(deliveries_list):
-    print("_____________________________________________________________________")
-    print("____________________________DELIVERIES_______________________________")
-    print("id | Address                                | Truck      | packages |")
+    print("_______________________________________________________________________________________")
+    print("____________________________DELIVERIES_________________________________________________")
+    print("id | Address                                | Truck      | packages | earliest deadline")
     for delivery in deliveries_list:
         # Pad the strings to take the same amount of space
         delivery_id = "{:<2}".format(delivery.id)
@@ -66,9 +66,9 @@ def print_delivery_table(deliveries_list):
             else "unassigned"
         )
         packages = "{:<8}".format(','.join([str(package.id) for package in delivery.packages]))
-        delivery_notes = ''  # delivery.notes if delivery.notes is not False else "N/A"
+        delivery_deadline = delivery.earliest_deadline()
         print(
-            f"{delivery_id} | {delivery_address} | {delivery_truck} | {packages} |"
+            f"{delivery_id} | {delivery_address} | {delivery_truck} | {packages} | {delivery_deadline}"
         )
     print("_____________________________________________________________________")
 

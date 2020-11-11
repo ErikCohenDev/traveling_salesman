@@ -18,7 +18,7 @@ def init(
     init_distances,
     init_packages,
 ):
-    global locations, distances, packages, deliveries, routes, trucks, starting_location, day_start, app_time
+    global locations, distances, packages, deliveries, routes, trucks, starting_location, day_start, app_time, total_miles_driven_by_all_trucks
     locations = init_locations
     distances = init_distances
     packages = init_packages
@@ -28,6 +28,7 @@ def init(
     starting_location = init_locations[0]
     day_start = datetime.today().strptime("08:00:00", "%H:%M:%S")
     app_time = day_start.time()
+    total_miles_driven_by_all_trucks = 0
 
 
 def add_an_hour_to_global_time():

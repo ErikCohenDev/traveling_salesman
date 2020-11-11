@@ -10,6 +10,10 @@ class Package:
         self.weight = weight
         self.notes = notes
 
+    def update_location(self, location):
+        self.location = location
+        return self
+
 
 def get_package_by_id(_id):
     return [package for package in cfg.packages if package.id == _id][0]

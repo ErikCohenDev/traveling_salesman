@@ -1,9 +1,9 @@
-from debug import print_delivery_count_by_truck, print_delivery_table, print_miles_report, print_package_count_by_truck, print_package_table, print_route_table, print_truck_table
-from typing import List
+from datetime import datetime
+from package import get_package_by_id
+from location import get_location_by_address
 from csv_import import load_data
-from delivery import Delivery, create_deliveries, filter_deliveries_with_package_id_list, get_deliveries_from_package_id_list, get_deliveries_with_restrictions, get_deliveries_with_unassigned_trucks, get_deliveries_without_restrictions
+from delivery import create_deliveries, get_deliveries_from_package_id_list, get_deliveries_without_restrictions, get_delivery_from_address, get_delivery_from_package_id
 import config as cfg
-from distance import get_distance
 from truck import Truck, assign_all_deliveries_to_best_truck, distribute_deliveries_to_trucks
 
 
@@ -25,6 +25,7 @@ def main():
     truck1: Truck = cfg.trucks[0]
     truck2: Truck = cfg.trucks[1]
     truck3: Truck = cfg.trucks[2]
+
     non_restricted_deliveries = get_deliveries_without_restrictions()
 
     distribute_deliveries_to_trucks(non_restricted_deliveries)
@@ -45,20 +46,41 @@ def main():
 
     # start delivering
     truck1.start_delivering(cfg.app_time)
-    truck2.start_delivering(cfg.app_time)
 
+    today_10_20am = datetime.now().replace(hour=10, minute=20, second=0, microsecond=0).time()
+
+    print('sum of Miles for all routes is', round(sum([truck.route.get_miles() for truck in cfg.trucks])), 'miles')
     while (running):
-        option = input("press the 1 to ff an hour: \n")
-        if option == '1':
+        if cfg.app_time >= today_10_20am and not delivery_with_wrong_address_is_fixed():
+            fix_wrong_package_address_from_package_id(9, '410 S State St')
+            truck2.start_delivering(cfg.app_time)
+        option = input("press the Enter key to ff an hour, enter q to quit \n")
+        if option == '':
             cfg.add_an_hour_to_global_time()
             for truck in cfg.trucks:
                 if truck.started_delivering:
                     truck.an_hour_passed()
-                if truck.id != 3 and truck.at_base() and truck3.started_delivering is False:
+                if truck.id != 3 and truck.at_base() and truck.route.route_complete and truck3.started_delivering is False:
                     truck3.start_delivering(truck.route.time_route_complete)
-            print('Current Time: ',cfg.app_time)
+            print('Current Time: ', cfg.app_time)
         else:
             running = False
+
+
+def delivery_with_wrong_address_is_fixed():
+    delivery = get_delivery_from_package_id(9)
+    return delivery.location.address == '410 S State St'
+
+
+def fix_wrong_package_address_from_package_id(package_id, new_address):
+    print(f'correcting wrong address for package {package_id}')
+    correct_location = get_location_by_address(new_address)
+    delivery_with_wrong_location = get_delivery_from_package_id(package_id)
+    package_with_wrong_location = get_package_by_id(package_id)
+    delivery_with_wrong_location.remove_package(package_with_wrong_location)
+    delivery_with_correct_location = get_delivery_from_address(new_address)
+    package_with_correct_address = package_with_wrong_location.update_location(correct_location)
+    delivery_with_correct_location.add_package(package_with_correct_address)
 
 
 if __name__ == "__main__":

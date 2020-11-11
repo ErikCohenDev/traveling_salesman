@@ -35,7 +35,6 @@ class Route:
         miles_driven_accumulator = 0
         for loc_idx, location in enumerate(self._route):
             delivered_location = self._route[loc_idx + 1]
-            delivery = self.deliveries[loc_idx]
             driven_distance = get_distance(location.address, delivered_location.address)
             if miles_driven_accumulator + driven_distance > self._miles_driven:
                 return delivered_location
