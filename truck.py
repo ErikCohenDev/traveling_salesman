@@ -13,31 +13,40 @@ class Truck:
         self.started_delivering = False
 
     def assign_deliveries(self, deliveries_list):
+        # Big O(1)
         self.route.add_deliveries(self.id, deliveries_list)
 
     def at_base(self):
+        # Big O(1)
         return self.route._current_location == self.route.starting_location
 
     def assign_delivery(self, delivery, add_index):
+        # Big O(1)
         self.route.add_delivery(self.id, delivery, add_index)
 
     def assign_delivery_list(self, delivery_list):
+        # Big O(1)
         self.route.add_deliveries(self.id, delivery_list)
 
     def will_fit(self, delivery):
+        # Big O(1)
         return len(self.get_packages()) + len(delivery.packages) <= 16
 
     def will_fit_list(self, delivery_list):
+        # Big O(n)
         package_list_sum = sum([len(delivery.packages) for delivery in delivery_list])
         return len(self.get_packages()) + package_list_sum <= 16
 
     def get_deliveries(self):
+        # Big O(n)
         return [delivery for delivery in self.route.deliveries]
 
     def get_packages(self):
+        # Big O(n)
         return [delivery.packages for delivery in self.route.deliveries]
 
     def start_delivering(self, time):
+        # Big O(1)
         self.started_delivering = True
         self.route.init(time)
         self.departure_time = time

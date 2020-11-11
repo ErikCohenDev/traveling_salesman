@@ -8,6 +8,7 @@ from truck import Truck, assign_all_deliveries_to_best_truck, distribute_deliver
 
 
 def init_data():
+    # Big O(n^2)
     """
     Load up all the data and store it in the config file
     """
@@ -19,6 +20,7 @@ def init_data():
 
 
 def main():
+    # Big O(n^2)
     running = True
     init_data()
 
@@ -68,11 +70,13 @@ def main():
 
 
 def delivery_with_wrong_address_is_fixed():
+    # Big O(n)
     delivery = get_delivery_from_package_id(9)
     return delivery.location.address == '410 S State St'
 
 
 def fix_wrong_package_address_from_package_id(package_id, new_address):
+    # Big O(n)
     print(f'correcting wrong address for package {package_id}')
     correct_location = get_location_by_address(new_address)
     delivery_with_wrong_location = get_delivery_from_package_id(package_id)

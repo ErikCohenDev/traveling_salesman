@@ -18,6 +18,7 @@ def init(
     init_distances,
     init_packages,
 ):
+    # Big O(1)
     global locations, distances, packages, deliveries, routes, trucks, starting_location, day_start, app_time, total_miles_driven_by_all_trucks
     locations = init_locations
     distances = init_distances
@@ -32,5 +33,6 @@ def init(
 
 
 def add_an_hour_to_global_time():
+    # Big O(1)
     global app_time
     app_time = app_time.replace(hour=app_time.hour + 1)

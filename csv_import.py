@@ -7,6 +7,7 @@ from datetime import datetime
 
 
 def get_locations():
+    # Big O(N)
     locations = []
     with open("./data/locations.csv") as csv_file:
         reader = csv.DictReader(csv_file)
@@ -16,6 +17,7 @@ def get_locations():
 
 
 def get_distances(locations):
+    # Big O(N^2)
     distances = HashTable()
     with open("./data/distance.csv") as csv_file:
         csv_reader = csv.reader(csv_file)
@@ -31,6 +33,7 @@ def get_distances(locations):
 
 
 def convert_deadline_to_datetime(deadline):
+    # Big O(1)
     EOD_time = datetime.strptime("17:00:00", "%H:%M:%S").time()
     now = datetime.today()
     if deadline == "EOD":
@@ -41,12 +44,14 @@ def convert_deadline_to_datetime(deadline):
 
 
 def parse_notes(note):
+    # Big O(1)
     if note == "N/A":
         return False
     return note
 
 
 def get_packages(locations):
+    # Big O(N)
     packages = []
     with open("./data/packages.csv") as csv_file:
         reader = csv.DictReader(csv_file)
@@ -66,9 +71,11 @@ def get_packages(locations):
 
 
 def load_data():
+    # Big O(N^2)
     locations = get_locations()
     return locations, get_distances(locations), get_packages(locations)
 
 
 if __name__ == "__main__":
+    # Big O(N^2)
     load_data()

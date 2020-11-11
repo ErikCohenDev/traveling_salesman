@@ -9,4 +9,5 @@ class Location:
 
 
 def get_location_by_address(address):
+    # Big O(n)
     return [location for location in cfg.locations if location.address == address][0]

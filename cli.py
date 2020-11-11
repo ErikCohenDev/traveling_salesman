@@ -46,6 +46,7 @@ class CLI:
     4. return to main menu""")
 
     def run(self):
+        # Big O(N)
         while self.running:
             self.show_main_menu_prompt()
             option = input("enter an option: ")
@@ -75,6 +76,7 @@ class CLI:
                 print("Unknown option, please enter a number from the menu\n")
 
     def display_delivered_packages(self):
+        # Big O(N)
         count = 0
         for package in self.packages:
             if package.delivered:

@@ -4,6 +4,7 @@ import config as cfg
 
 
 def print_miles_report():
+    # Big O(n)
     truck1_miles, truck2_miles, truck3_miles = [truck.route.get_miles() for truck in cfg.trucks]
 
     print(f"Truck1 Miles: {truck1_miles}")
@@ -13,6 +14,7 @@ def print_miles_report():
 
 
 def print_delivery_count_by_truck():
+    # Big O(n)
     truck1_deliveries, truck2_deliveries, truck3_deliveries = [len(truck.get_deliveries()) for truck in cfg.trucks]
 
     print(f"Truck1 Deliveries: {truck1_deliveries}")
@@ -23,6 +25,7 @@ def print_delivery_count_by_truck():
 
 
 def print_package_count_by_truck():
+    # Big O(n)
     truck1_packages, truck2_packages, truck3_packages = [len(truck.get_packages()) for truck in cfg.trucks]
 
     print(f"Truck1 packages: {truck1_packages}")
@@ -33,6 +36,7 @@ def print_package_count_by_truck():
 
 
 def print_package_table():
+    # Big O(n)
     print("___________________________________________________________________")
     print("____________________________PACKAGES_______________________________")
     print("id | Address                                | Truck      | Deadline | Notes ")
@@ -53,6 +57,7 @@ def print_package_table():
 
 
 def print_delivery_table(deliveries_list):
+    # Big O(n^2)
     print("_______________________________________________________________________________________")
     print("____________________________DELIVERIES_________________________________________________")
     print("id | Address                                | Truck      | packages | earliest deadline")
@@ -74,6 +79,7 @@ def print_delivery_table(deliveries_list):
 
 
 def print_truck_table():
+    # Big O(n^2)
     print("_____________________________________________________________________")
     print("______________________________Trucks_________________________________")
     print("id | Current Location                       | Deliveries | Packages |")
@@ -90,6 +96,7 @@ def print_truck_table():
 
 
 def print_route_table():
+    # Big O(n)
     print("_____________________________________________________________________")
     print("______________________________Routes_________________________________")
     for truck in cfg.trucks:

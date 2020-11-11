@@ -6,7 +6,6 @@ from distance import (
     get_closest_next_location,
     get_miles_of_route,
 )
-from math import ceil, floor
 from delivery import Delivery
 from typing import List
 
@@ -27,6 +26,7 @@ class Route:
         self.time_route_complete = None
 
     def get_current_location(self):
+        # Big O(n)
         if self._miles_driven == 0:
             return self._route[0]
         if self.route_complete is True:
@@ -41,9 +41,11 @@ class Route:
             miles_driven_accumulator += driven_distance
 
     def get_miles(self):
+        # Big O(n)
         return get_miles_of_route(self.starting_location, self.deliveries)
 
     def add_delivery(self, truck_id, delivery, add_index):
+        # Big O(n)
         delivery.set_assigned_truck(truck_id)
         if add_index is None:
             self.deliveries.append(delivery)
@@ -51,17 +53,20 @@ class Route:
         self.deliveries.insert(add_index, delivery)
 
     def add_deliveries(self, truck_id, deliveries_list: List[Delivery]):
+        # Big O(n)
         for delivery in deliveries_list:
             delivery.set_assigned_truck(truck_id)
         self.deliveries += deliveries_list
 
     def get_next_delivery(self):
+        # Big O(n)
         try:
             return next(delivery for delivery in self.deliveries if delivery.delivered is False)
         except StopIteration:
             return None
 
     def get_miles_left(self):
+        # Big O(n)
         if not self.get_next_delivery():
             return 0
         current_location = self._current_location
@@ -75,12 +80,14 @@ class Route:
         return round(miles_left, 2)
 
     def added_distance_from_delivery_list(self, delivery_list):
+        # Big O(n)
         added_distance = 0
         for delivery in delivery_list:
             added_distance = self.added_distance(delivery)
         return added_distance
 
     def added_distance(self, delivery_to_measure: Delivery):
+        # Big O(n)
         if len(self.deliveries) == 0:
             return get_distance(self.starting_location.address, delivery_to_measure.location.address), None
 
@@ -96,12 +103,14 @@ class Route:
         return (min_distance, add_index)
 
     def init(self, time):
+        # Big O(n)
         self._departure_time = time
         for delivery in self.deliveries:
             if self._route[-1].address != delivery.location:
                 self._route.append(delivery.location)
 
     def is_route_complete(self):
+        # Big O(n)
         return self.route_complete or self.get_next_location() is None
 
     def get_miles_to_next_location(self):
@@ -111,14 +120,17 @@ class Route:
         return get_distance(self._current_location.address, next_location.address)
 
     def miles_to_minutes(self, miles):
+        # Big O(1)
         return miles / 0.3  # 18MPH / 60 mins
 
     def miles_traveled_time_delivered(self, miles):
+        # Big O(1)
         minutes_to_add = self.miles_to_minutes(miles)
         dt_delivered = datetime.combine(datetime.today(), self._departure_time) + timedelta(minutes=minutes_to_add)
         return dt_delivered.time()
 
-    def return_to_base(self, truck_id, new_miles_driven):
+    def return_to_base(self, truck_id):
+        # Big O(n)
         drive_distance = get_distance(self._current_location.address, self.starting_location.address)
         self._miles_driven += drive_distance
         timestamp = self.miles_traveled_time_delivered(self._miles_driven)
@@ -127,6 +139,7 @@ class Route:
         print(f'Truck {truck_id} back at base at', timestamp)
 
     def advance_by_miles(self, new_miles_driven):
+        # Big O(n)
         miles_driven_acc = self._miles_driven
         self._miles_driven += new_miles_driven
 
@@ -146,6 +159,7 @@ class Route:
 
 
 def calculate_route(deliveries):
+    # Big O(n)
     route = [cfg.starting_location]
     pending_deliveries = list(deliveries.keys())
     miles = 0

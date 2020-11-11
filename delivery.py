@@ -17,29 +17,36 @@ class Delivery:
         self.id = Delivery._class_counter
 
     def earliest_deadline(self):
+        # Big O(n)
         return min([package.deadline.time() for package in self.packages if package.deadline.time()])
 
     def add_package(self, package):
+        # Big O(1)
         self.packages.append(package)
 
     def remove_package(self, package):
+        # Big O(1)
         self.packages.remove(package)
 
     def has_package_id(self, _id):
+        # Big O(n)
         return len([package for package in self.packages if package.id == _id]) > 0
 
     def set_assigned_truck(self, num):
+        # Big O(n)
         self.assigned_truck = num
         for package in self.packages:
             package.assigned_truck = num
 
     def mark_as_delivered(self, time_delivered):
+        # Big O(1)
         print(f"delivered packages to {self.location.address} at {time_delivered}")
         self.delivered_time = time_delivered
         self.delivered = True
 
 
 def create_deliveries():
+    # Big O(n^2)
     deliveries: List[Delivery] = []
     for location in cfg.locations:
         packages_for_location = []
@@ -52,6 +59,7 @@ def create_deliveries():
 
 
 def get_delivery_from_package_id(package_id):
+    # Big O(n^2)
     for delivery in cfg.deliveries:
         for package in delivery.packages:
             if package.id == package_id:
@@ -59,6 +67,7 @@ def get_delivery_from_package_id(package_id):
 
 
 def get_deliveries_from_package_id_list(packages_id_list):
+    # Big O(n)
     delivery_list = []
     for _id in packages_id_list:
         delivery_list.append(get_delivery_from_package_id(_id))
@@ -66,6 +75,7 @@ def get_deliveries_from_package_id_list(packages_id_list):
 
 
 def get_deliveries_with_unassigned_trucks():
+    # Big O(n^2)
     deliveries_with_unassigned_packages = []
     for delivery in cfg.deliveries:
         for package in delivery.packages:
@@ -75,6 +85,7 @@ def get_deliveries_with_unassigned_trucks():
 
 
 def get_number_of_packages_for_delivery_list(delivery_list):
+    # Big O(n^2)
     packages_count = 0
     for delivery in delivery_list:
         packages_count += len(delivery.packages)
@@ -82,6 +93,7 @@ def get_number_of_packages_for_delivery_list(delivery_list):
 
 
 def filter_deliveries_with_package_id_list(package_id_list):
+    # Big O(n^2)
     deliveries_without_filter = []
     for delivery in cfg.deliveries:
         check_if_contains_filter = any([package for package in delivery.packages if package.id in package_id_list])
@@ -91,6 +103,7 @@ def filter_deliveries_with_package_id_list(package_id_list):
 
 
 def get_deliveries_without_restrictions():
+    # Big O(n^2)
     deliveries_without_filter = []
     for delivery in cfg.deliveries:
         check_if_has_restriction = any(
@@ -102,6 +115,7 @@ def get_deliveries_without_restrictions():
 
 
 def get_deliveries_with_restrictions():
+    # Big O(n^2)
     deliveries_without_filter = []
     for delivery in cfg.deliveries:
         check_if_has_restriction = any(
@@ -113,4 +127,5 @@ def get_deliveries_with_restrictions():
 
 
 def get_delivery_from_address(address):
+    # Big O(n)
     return [delivery for delivery in cfg.deliveries if delivery.location.address == address][0]
