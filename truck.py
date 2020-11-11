@@ -78,6 +78,7 @@ class Truck:
 
 
 def distribute_deliveries_to_trucks(delivery_list):
+    # Big O(n^2)
     for delivery in delivery_list:
         closest_truck = None
         closest_truck_distance = None
@@ -93,6 +94,7 @@ def distribute_deliveries_to_trucks(delivery_list):
 
 
 def assign_all_deliveries_to_best_truck(delivery_list):
+    # Big O(n)
     closest_truck = None
     closest_truck_distance = None
     route_add_index = None
