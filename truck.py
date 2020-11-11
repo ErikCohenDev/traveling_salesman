@@ -53,11 +53,12 @@ class Truck:
         print(f"Truck {self.id} has started its route at {time}")
 
     def an_hour_passed(self):
+        # Big O(n)
         miles_left = self.route.get_miles_left
 
         if self.completed_route or miles_left() == 0:
             if self.route._current_location != self.route.starting_location:
-                self.route.return_to_base(self.id, 18)
+                self.route.return_to_base(self.id)
             self.completed_route = True
             print(f"Truck {self.id} has completed route")
             return
