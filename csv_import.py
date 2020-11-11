@@ -7,7 +7,10 @@ from datetime import datetime
 
 
 def get_locations():
-    # Big O(N)
+    """
+    Complexity: Big O(N)
+    Get all the location data from the CSV and create a location object
+    """
     locations = []
     with open("./data/locations.csv") as csv_file:
         reader = csv.DictReader(csv_file)
@@ -17,7 +20,11 @@ def get_locations():
 
 
 def get_distances(locations):
-    # Big O(N^2)
+    """
+    Complexity: Big O(N^2)
+    Get all the distances from the csv file and create a distances hashtable
+    We will use the hash table later to compute the distance from one location to another
+    """
     distances = HashTable()
     with open("./data/distance.csv") as csv_file:
         csv_reader = csv.reader(csv_file)
@@ -33,7 +40,12 @@ def get_distances(locations):
 
 
 def convert_deadline_to_datetime(deadline):
-    # Big O(1)
+    """
+    Complexity: Big O(1)
+    parse the deadline string into a deadline datetime
+    if deadline is not present set the deadline to 17:00 as the End of the working day
+    object to be able to better calculate times to deadline
+    """
     EOD_time = datetime.strptime("17:00:00", "%H:%M:%S").time()
     now = datetime.today()
     if deadline == "EOD":
@@ -44,14 +56,22 @@ def convert_deadline_to_datetime(deadline):
 
 
 def parse_notes(note):
-    # Big O(1)
+    """
+    Complexity: Big O(1)
+    Tread N/A as a falsy value
+    """
     if note == "N/A":
         return False
     return note
 
 
 def get_packages(locations):
-    # Big O(N)
+    """
+    Complexity: Big O(N)
+    get all the package data from the csv and create Package class instances
+    append additional data to the location object which it did not previously have
+    match the location address of the package with a location instance already created to make mapping simpler.
+    """
     packages = []
     with open("./data/packages.csv") as csv_file:
         reader = csv.DictReader(csv_file)
@@ -59,6 +79,11 @@ def get_packages(locations):
             package_location = [
                 location for location in locations if location.address == row["address"]
             ][0]
+
+            package_location.set_city(row["city"])
+            package_location.set_state(row["state"])
+            package_location.set_zip_code(row["zip"])
+
             new_package = Package(
                 int(row["id"]),
                 package_location,
@@ -71,7 +96,10 @@ def get_packages(locations):
 
 
 def load_data():
-    # Big O(N^2)
+    """
+    Complexity: Big O(N^2)
+    Initiate all the get_* functions to initialize all the data needed to start our application
+    """
     locations = get_locations()
     return locations, get_distances(locations), get_packages(locations)
 

@@ -10,7 +10,7 @@ from truck import Truck, assign_all_deliveries_to_best_truck, distribute_deliver
 def init_data():
     # Big O(n^2)
     """
-    Load up all the data and store it in the config file
+    Load up all the data and store it in the config module
     """
     init_locations, init_distances, init_packages = load_data()
     cfg.init(init_locations, init_distances, init_packages)

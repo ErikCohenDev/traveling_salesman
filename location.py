@@ -7,6 +7,15 @@ class Location:
         self.name = name
         self.address = address
 
+    def set_city(self, city):
+        self.city = city
+
+    def set_state(self, state):
+        self.state = state
+
+    def set_zip_code(self, zip_code):
+        self.zip_code = zip_code
+
 
 def get_location_by_address(address):
     # Big O(n)
