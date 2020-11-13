@@ -5,6 +5,9 @@ from typing import List
 
 
 class Delivery:
+    """
+    A Delivery aggregates a list of packages which are assigned the same location
+    """
     _class_counter = 0
 
     def __init__(self, location, packages=[]):
@@ -17,36 +20,57 @@ class Delivery:
         self.id = Delivery._class_counter
 
     def earliest_deadline(self):
-        # Big O(n)
+        """
+        Complexity: Big O(n)
+        Return the time of the package which has to arrive the earliest to its destination
+        """
         return min([package.deadline.time() for package in self.packages if package.deadline.time()])
 
     def add_package(self, package):
-        # Big O(1)
+        """
+        Complexity: Big O(1)
+        Add the package to this delivery
+        """
         self.packages.append(package)
 
     def remove_package(self, package):
-        # Big O(1)
+        """
+        Complexity: Big O(1)
+        Remove the package from this delivery
+        """
         self.packages.remove(package)
 
     def has_package_id(self, _id):
-        # Big O(n)
+        """
+        Complexity: Big O(n)
+        Check if this package id exists within the packages list
+        """
         return len([package for package in self.packages if package.id == _id]) > 0
 
     def set_assigned_truck(self, num):
-        # Big O(n)
+        """
+        Complexity: Big O(n)
+        Set the id of the truck that this delivery and packages are assigned to
+        """
         self.assigned_truck = num
         for package in self.packages:
             package.assigned_truck = num
 
     def mark_as_delivered(self, time_delivered):
-        # Big O(1)
-        print(f"delivered packages to {self.location.address} at {time_delivered}")
+        """
+        Complexity: Big O(1)
+        Mark the delivery as delivered and log the instance, time of delivery
+        """
+        print(f"Truck {self.assigned_truck} delivered packages to {self.location.address} at {time_delivered}")
         self.delivered_time = time_delivered
         self.delivered = True
 
 
 def create_deliveries():
-    # Big O(n^2)
+    """
+    Complexity: Big O(n^2)
+    Create a list of deliveries from all the packages defined globally in the app
+    """
     deliveries: List[Delivery] = []
     for location in cfg.locations:
         packages_for_location = []
@@ -59,7 +83,10 @@ def create_deliveries():
 
 
 def get_delivery_from_package_id(package_id):
-    # Big O(n^2)
+    """
+    Complexity: Big O(n^2)
+    Get a Delivery that contains a package with a specific id
+    """
     for delivery in cfg.deliveries:
         for package in delivery.packages:
             if package.id == package_id:
@@ -67,7 +94,10 @@ def get_delivery_from_package_id(package_id):
 
 
 def get_deliveries_from_package_id_list(packages_id_list):
-    # Big O(n)
+    """
+    Complexity: Big O(n)
+    Get a list of deliveries which contain an id from a list of packages
+    """
     delivery_list = []
     for _id in packages_id_list:
         delivery_list.append(get_delivery_from_package_id(_id))
@@ -75,7 +105,10 @@ def get_deliveries_from_package_id_list(packages_id_list):
 
 
 def get_deliveries_with_unassigned_trucks():
-    # Big O(n^2)
+    """
+    Complexity: Big O(n^2)
+    Get all the deliveries which do not have a truck assigned
+    """
     deliveries_with_unassigned_packages = []
     for delivery in cfg.deliveries:
         for package in delivery.packages:
@@ -85,7 +118,10 @@ def get_deliveries_with_unassigned_trucks():
 
 
 def get_number_of_packages_for_delivery_list(delivery_list):
-    # Big O(n^2)
+    """
+    Complexity: Big O(n^2)
+    Get the number of packages from a list of deliveries
+    """
     packages_count = 0
     for delivery in delivery_list:
         packages_count += len(delivery.packages)
@@ -93,7 +129,10 @@ def get_number_of_packages_for_delivery_list(delivery_list):
 
 
 def filter_deliveries_with_package_id_list(package_id_list):
-    # Big O(n^2)
+    """
+    Complexity: Big O(n^2)
+    Return a list of deliveries which do not contain an id from the package list
+    """
     deliveries_without_filter = []
     for delivery in cfg.deliveries:
         check_if_contains_filter = any([package for package in delivery.packages if package.id in package_id_list])
@@ -103,7 +142,10 @@ def filter_deliveries_with_package_id_list(package_id_list):
 
 
 def get_deliveries_without_restrictions():
-    # Big O(n^2)
+    """
+    Complexity: Big O(n^2)
+    Get a List of Deliveries which do not have a restriction
+    """
     deliveries_without_filter = []
     for delivery in cfg.deliveries:
         check_if_has_restriction = any(
@@ -115,7 +157,10 @@ def get_deliveries_without_restrictions():
 
 
 def get_deliveries_with_restrictions():
-    # Big O(n^2)
+    """
+    Complexity: Big O(n^2)
+    Get the deliveries that have some kind of restriction
+    """
     deliveries_without_filter = []
     for delivery in cfg.deliveries:
         check_if_has_restriction = any(
@@ -127,5 +172,8 @@ def get_deliveries_with_restrictions():
 
 
 def get_delivery_from_address(address):
-    # Big O(n)
+    """
+    Complexity: Big O(n)
+    Static method to get the delivery by the Address String of a location
+    """
     return [delivery for delivery in cfg.deliveries if delivery.location.address == address][0]
