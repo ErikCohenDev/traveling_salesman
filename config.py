@@ -1,6 +1,8 @@
 from datetime import datetime, time, timedelta
 
-# Constraints
+"""
+Define Lists of package ID's which have restrictions
+"""
 packages_that_must_be_on_truck_2 = [3, 18, 36, 38]  # 29.4 miles
 packages_that_must_go_together = [13, 14, 15, 16, 19, 20]  # 29.8 miles
 packages_that_leave_at_9_05 = [6, 25, 28, 32]  # 20.5 miles
@@ -18,7 +20,10 @@ def init(
     init_distances,
     init_packages,
 ):
-    # Big O(1)
+    """
+    Complexity: Big O(1)
+    Initializer function to declare all the global variables needed during the applications lifetime
+    """
     global locations, distances, packages, deliveries, routes, trucks, starting_location, day_start, app_time, total_miles_driven_by_all_trucks
     locations = init_locations
     distances = init_distances
@@ -32,7 +37,16 @@ def init(
     total_miles_driven_by_all_trucks = 0
 
 
-def add_an_hour_to_global_time():
-    # Big O(1)
+def add_minutes_to_global_time(minutes):
+    """
+    Complexity: Big O(1)
+    Simulate that amount of minutes have passed
+    """
     global app_time
-    app_time = app_time.replace(hour=app_time.hour + 1)
+    new_minutes = minutes + app_time.minute
+    new_hours = app_time.hour
+    if (new_minutes >= 60):
+        new_hours = (new_minutes // 60) + app_time.hour
+        new_minutes = new_minutes % 60
+
+    app_time = app_time.replace(minute=new_minutes, hour=new_hours)
