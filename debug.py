@@ -4,7 +4,10 @@ import config as cfg
 
 
 def print_miles_report():
-    # Big O(n)
+    """
+    Complexity: Big O(n)
+    Print a report which lists the amount of miles driven by each truck
+    """
     truck1_miles, truck2_miles, truck3_miles = [truck.route.get_miles() for truck in cfg.trucks]
 
     print(f"Truck1 Miles: {truck1_miles}")
@@ -14,7 +17,11 @@ def print_miles_report():
 
 
 def print_delivery_count_by_truck():
-    # Big O(n)
+    """
+    Complexity: Big O(n)
+    Print a report which lists the deliveries delivered by truck.
+    The total assigned and unassigned deliveries
+    """
     truck1_deliveries, truck2_deliveries, truck3_deliveries = [len(truck.get_deliveries()) for truck in cfg.trucks]
 
     print(f"Truck1 Deliveries: {truck1_deliveries}")
@@ -25,7 +32,11 @@ def print_delivery_count_by_truck():
 
 
 def print_package_count_by_truck():
-    # Big O(n)
+    """
+    Complexity: Big O(n)
+    Print a report which lists the amount packages assigned to each truck
+    The total assigned and unassigned packages
+    """
     truck1_packages, truck2_packages, truck3_packages = [len(truck.get_packages()) for truck in cfg.trucks]
 
     print(f"Truck1 packages: {truck1_packages}")
@@ -36,7 +47,10 @@ def print_package_count_by_truck():
 
 
 def print_package_table():
-    # Big O(n)
+    """
+    Complexity: Big O(n)
+    Print a Table which lists the id, address, truck assigned, deadline and any notes of each package
+    """
     print("___________________________________________________________________")
     print("____________________________PACKAGES_______________________________")
     print("id | Address                                | Truck      | Deadline | Notes ")
@@ -57,7 +71,10 @@ def print_package_table():
 
 
 def print_delivery_table(deliveries_list):
-    # Big O(n^2)
+    """
+    Complexity: Big O(n^2)
+    Print a Table which lists the id, address, truck assigned, packages, and deadline of each delivery
+    """
     print("_______________________________________________________________________________________")
     print("____________________________DELIVERIES_________________________________________________")
     print("id | Address                                | Truck      | packages | earliest deadline")
@@ -79,7 +96,10 @@ def print_delivery_table(deliveries_list):
 
 
 def print_truck_table():
-    # Big O(n^2)
+    """
+    Complexity: Big O(n^2)
+    Print a Table which lists the id, current location, deliveries, packages of each truck
+    """
     print("_____________________________________________________________________")
     print("______________________________Trucks_________________________________")
     print("id | Current Location                       | Deliveries | Packages |")
@@ -96,10 +116,25 @@ def print_truck_table():
 
 
 def print_route_table():
-    # Big O(n)
+    """
+    Complexity: Big O(n^2)
+    Print list of addresses in the route assigned to each truck
+    """
     print("_____________________________________________________________________")
     print("______________________________Routes_________________________________")
     for truck in cfg.trucks:
         print(f'Route assigned to truck {truck.id}')
         for delivery in truck.route.deliveries:
             print(f' |- {delivery.location.address}')
+
+
+def print_current_time():
+    """
+    Complexity: Big O(n^2)
+    print the global simulated time of the app
+    """
+    print(
+        '________________________________\nThe current time is:',
+        cfg.app_time,
+        '\n________________________________\n'
+    )
