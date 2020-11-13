@@ -1,18 +1,17 @@
 from location import Location
-from typing import List
-from delivery import Delivery
 import config as cfg
 
 
 def get_distance(address_start, address_end):
-    # Big O(1)
     """
-    ### Parameters
+### Complexity
+    Big O(1)
+### Parameters
     1. address_start: str
         - the initial location to compare two
     2. address_end : str
         - the second address to compare to
-    ### Returns
+### Returns
     - number
         - The distance in miles from
         address_start to address_end
@@ -32,7 +31,10 @@ def get_distance(address_start, address_end):
 
 
 def get_closest_next_location(current_address, pending_deliveries):
-    # Big O(n)
+    """
+    Complexity: Big O(n)
+    Get the closest next location from a list of pending deliveries
+    """
     distance_to_next_location = None
     for next_delivery_address in pending_deliveries:
         next_location_distance = distance_to_next_location
@@ -45,8 +47,8 @@ def get_closest_next_location(current_address, pending_deliveries):
 
 
 def get_miles_of_route(starting_location: Location, delivery_list, return_to_depot=False):
-    # Big O(n)
     """
+    Complexity: Big O(n)
     ### Parameters
     1. delivery_list: List[Delivery]
         - the delivery list for the route
