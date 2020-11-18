@@ -1,8 +1,8 @@
 import csv
 
+from package import Package
 from hash_table import HashTable
 from location import Location
-from package import Package
 from datetime import datetime
 
 

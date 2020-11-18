@@ -1,7 +1,4 @@
 import config as cfg
-from location import Location
-from package import Package
-from typing import List
 
 
 class Delivery:
@@ -12,12 +9,13 @@ class Delivery:
 
     def __init__(self, location, packages=[]):
         Delivery._class_counter += 1
-        self.location: Location = location
-        self.packages: List[Package] = packages
+        self.location = location
+        self.packages = packages
         self.assigned_truck = None
         self.delivered_time = None
-        self.delivered: bool = False
+        self.delivered = False
         self.id = Delivery._class_counter
+        self.ETA = None
 
     def earliest_deadline(self):
         """
@@ -25,6 +23,9 @@ class Delivery:
         Return the time of the package which has to arrive the earliest to its destination
         """
         return min([package.deadline.time() for package in self.packages if package.deadline.time()])
+
+    def set_ETA(self, ETA):
+        self.ETA = ETA
 
     def add_package(self, package):
         """
@@ -71,7 +72,7 @@ def create_deliveries():
     Complexity: Big O(n^2)
     Create a list of deliveries from all the packages defined globally in the app
     """
-    deliveries: List[Delivery] = []
+    deliveries = []
     for location in cfg.locations:
         packages_for_location = []
         for package in cfg.packages:

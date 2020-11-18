@@ -1,4 +1,5 @@
-from datetime import datetime, time, timedelta
+from datetime import datetime
+from truck import Truck
 
 """
 Define Lists of package ID's which have restrictions
@@ -24,17 +25,20 @@ def init(
     Complexity: Big O(1)
     Initializer function to declare all the global variables needed during the applications lifetime
     """
-    global locations, distances, packages, deliveries, routes, trucks, starting_location, day_start, app_time, total_miles_driven_by_all_trucks
+    global locations, distances, packages, deliveries, routes, trucks, truck1, truck2, truck3, starting_location, day_start, app_time, total_miles_driven_by_all_trucks
     locations = init_locations
     distances = init_distances
     packages = init_packages
     deliveries = []
     routes = []
-    trucks = []
     starting_location = init_locations[0]
     day_start = datetime.today().strptime("08:00:00", "%H:%M:%S")
     app_time = day_start.time()
     total_miles_driven_by_all_trucks = 0
+    trucks = [Truck(1), Truck(2), Truck(3)]
+    truck1 = trucks[0]
+    truck2 = trucks[1]
+    truck3 = trucks[2]
 
 
 def add_minutes_to_global_time(minutes):

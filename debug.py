@@ -77,7 +77,7 @@ def print_delivery_table(deliveries_list):
     """
     print("_______________________________________________________________________________________")
     print("____________________________DELIVERIES_________________________________________________")
-    print("id | Address                                | Truck      | packages | earliest deadline")
+    print("id | Address                                | Truck      | packages | deadline | ETA ")
     for delivery in deliveries_list:
         # Pad the strings to take the same amount of space
         delivery_id = "{:<2}".format(delivery.id)
@@ -89,8 +89,9 @@ def print_delivery_table(deliveries_list):
         )
         packages = "{:<8}".format(','.join([str(package.id) for package in delivery.packages]))
         delivery_deadline = delivery.earliest_deadline()
+        delivery_ETA = delivery.ETA
         print(
-            f"{delivery_id} | {delivery_address} | {delivery_truck} | {packages} | {delivery_deadline}"
+            f"{delivery_id} | {delivery_address} | {delivery_truck} | {packages} | {delivery_deadline} | {delivery_ETA}"
         )
     print("_____________________________________________________________________")
 

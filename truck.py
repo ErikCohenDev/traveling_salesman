@@ -1,3 +1,5 @@
+from datetime import datetime
+from delivery import get_deliveries_from_package_id_list, get_deliveries_with_unassigned_trucks
 from route import Route
 import config as cfg
 
@@ -61,7 +63,10 @@ class Truck:
         Complexity: Big O(n)
         Get all the packages assigned to this truck
         """
-        return [delivery.packages for delivery in self.route.deliveries]
+        package_list = []
+        for delivery in self.route.deliveries:
+            package_list += delivery.packages
+        return package_list
 
     def start_delivering(self, time):
         """
@@ -96,8 +101,17 @@ class Truck:
             print(f"Truck {self.id} has completed route")
             return
 
+    def get_ETA_back_at_depot(self):
+        return self.route.get_ETA_back_at_depot()
 
-def distribute_deliveries_to_trucks(delivery_list):
+    def populate_ETA(self, departure_time):
+        """
+        Complexity: Big O(n^2)
+        """
+        self.route.populate_ETA(departure_time)
+
+
+def distribute_deliveries_to_trucks():
     """
     Complexity: Big O(n^2)
     Calculate the added milage for each route assigned to each truck.
@@ -105,35 +119,37 @@ def distribute_deliveries_to_trucks(delivery_list):
     the least and its position within the route.
     Assign it to the best truck at the best position
     """
-    for delivery in delivery_list:
+    assign_deliveries_truck_2()
+    deliveries_with_unassigned_trucks = get_deliveries_with_unassigned_trucks()
+    now = datetime.today()
+    start_of_day_time = datetime.strptime("08:00:00", "%H:%M:%S").time()
+    start_of_day = datetime.combine(now, start_of_day_time).time()
+    for delivery in deliveries_with_unassigned_trucks:
         closest_truck = None
         closest_truck_distance = None
         route_add_index = None
         for truck in cfg.trucks:
             if truck.will_fit(delivery):
-                (added_distance, add_index) = truck.route.added_distance(delivery)
+                delivery_departure = None
+                if (truck.id == 1 or truck.id == 2):
+                    delivery_departure = start_of_day
+                elif (truck.id == 3):
+                    estimated_time_back_at_depot = datetime.strptime("10:30:00", "%H:%M:%S").time()
+                    delivery_departure = datetime.combine(now, estimated_time_back_at_depot).time()
+                (added_distance, add_index) = truck.route.added_distance(delivery_departure, delivery)
+                if (added_distance is None and add_index is None):
+                    continue
                 if closest_truck is None or added_distance < closest_truck_distance:
                     closest_truck = truck
                     closest_truck_distance = added_distance
                     route_add_index = add_index
 
-        if delivery.is_am_delivery():
-            route_add_index = 1
-
         closest_truck.assign_delivery(delivery, route_add_index)
 
 
-def assign_all_deliveries_to_best_truck(delivery_list):
+def assign_deliveries_truck_2():
     """
-    Complexity: Big O(n^2)
-    Assign all the deliveries within the list to the best truck regardless of position.
+    Complexity: Big O(n)
     """
-    closest_truck = None
-    closest_truck_distance = None
-    for truck in cfg.trucks:
-        if truck.will_fit_list(delivery_list):
-            (added_distance, _) = truck.route.added_distance_from_delivery_list(delivery_list)
-            if closest_truck is None or added_distance < closest_truck_distance:
-                closest_truck = truck
-                closest_truck_distance = added_distance
-    closest_truck.assign_delivery_list(delivery_list)
+    deliveries_that_must_go_on_truck_2 = get_deliveries_from_package_id_list(cfg.packages_that_must_be_on_truck_2)
+    cfg.truck2.assign_deliveries(deliveries_that_must_go_on_truck_2)

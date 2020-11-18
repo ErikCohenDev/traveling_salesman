@@ -1,74 +1,74 @@
 import debug as dbg
+import config as cfg
 
 
 class CLI:
     running = False
 
-    def __init__(self, packages):
+    def __init__(self):
         self.running = True
         self.run()
 
     def show_main_menu_prompt(self):
         print(
             """
---Main Menu--
-    1. packages
-    2. deliveries
-    3. trucks
-    4. quit application""")
-
-    def show_packages_prompt(self):
-        print(
-            """
---Packages Menu--
-    1. Show all delivered packages and their delivery times
-    2. show all undelivered packages
-    3. show all packages
-    4. return to main menu""")
-
-    def show_deliveries_prompt(self):
-        print(
-            """
---Deliveries Menu--
-    1. packages
-    2. deliveries
-    3. trucks
-    4. return to main menu"""
-        )
-
-    def show_trucks_prompt(self):
-        print(
-            """
---Trucks Menu--
-    1. packages
-    2. deliveries
-    3. trucks
-    4. return to main menu""")
+-- Menu --
+Enter the Letter for the report you would like to generate:
+enter a number of minutes you would like to simulate has passed e.g 15, 60 (1 hr), 120 (2 hr).
+    P Packages
+    D Deliveries
+    R Route
+    T trucks
+    Q return to main menu""")
 
     def run(self):
-        # Big O(N)
+        """
+        Complexity: Big O(N)
+        Runs an the app loop and displays menu items to the user
+        """
         while self.running:
+            if (cfg.truck1.completed_route or cfg.truck2.completed_route) and cfg.truck3.started_delivering is False:
+                truck_2_ETA_at_depot = cfg.truck2.get_ETA_back_at_depot()
+                cfg.truck3.start_delivering(truck_2_ETA_at_depot)
+                cfg.truck3.populate_ETA(truck_2_ETA_at_depot)
+
             self.show_main_menu_prompt()
             option = input("enter an option: ")
-            if option == "1":
-                self.show_packages_prompt()
-                sub_option = input("enter an option: ")
-                if sub_option == "1":
-                    self.display_delivered_packages()
-                elif sub_option == "2":
-                    self.display_undelivered_packages()
-                elif sub_option == "3":
-                    self.display_all_packages()
 
-            elif option == "2":
-                self.show_deliveries_prompt()
-                sub_option = input("enter an option: ")
+            """
+            if the user entered an int
+            fast forward the simulated clock of the app
+            notify each truck how many amount of minutes have passed
+            """
+            try:
+                if isinstance(int(option), int):
+                    minutes = int(option)
+                    cfg.add_minutes_to_global_time(minutes)
+                    for truck in cfg.trucks:
+                        if truck.started_delivering:
+                            truck.minutes_passed(minutes)
+                    dbg.print_current_time()
+                    dbg.print_truck_table()
+                    continue
+            except ValueError:
+                pass
 
-            elif option == "3":
-                self.show_trucks_prompt()
-                sub_option = input("enter an option: ")
+            # Capitalize to cover lower case inputs
+            option = option.capitalize()
 
-            elif option == "4":
+            if option == "P":
+                dbg.print_package_table()
+
+            elif option == "D":
+                dbg.print_delivery_table(cfg.deliveries)
+
+            elif option == "T":
+                dbg.print_truck_table()
+
+            elif option == "R":
+                dbg.print_route_table()
+
+            elif option == "Q":
                 print("Goodbye")
                 self.running = False
 
@@ -76,7 +76,9 @@ class CLI:
                 print("Unknown option, please enter a number from the menu\n")
 
     def display_delivered_packages(self):
-        # Big O(N)
+        """
+        Big O(N)
+        """
         count = 0
         for package in self.packages:
             if package.delivered:
