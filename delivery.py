@@ -72,11 +72,12 @@ def create_deliveries():
     Complexity: Big O(n^2)
     Create a list of deliveries from all the packages defined globally in the app
     """
+    wrong_package_id = 9
     deliveries = []
     for location in cfg.locations:
         packages_for_location = []
         for package in cfg.packages:
-            if package.location == location:
+            if package.location == location and package.id is not wrong_package_id:
                 packages_for_location.append(package)
         if len(packages_for_location) > 0:
             deliveries.append(Delivery(location, packages_for_location))

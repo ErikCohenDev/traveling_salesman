@@ -1,8 +1,6 @@
 from cli import CLI
-from package import get_package_by_id
-from location import get_location_by_address
 from csv_import import load_data
-from delivery import create_deliveries, get_delivery_from_address, get_delivery_from_package_id
+from delivery import create_deliveries
 import config as cfg
 from truck import distribute_deliveries_to_trucks
 
@@ -46,32 +44,6 @@ def main():
     init_data()
     assign_deliveries()
     CLI().run()
-
-
-def delivery_with_wrong_address_is_fixed():
-    """
-    Complexity: Big O(n^2)
-    Check if the Delivery with the wrong address has been fixed
-    Returns: bool - has it been fixed?
-    """
-    delivery = get_delivery_from_package_id(9)
-    return delivery.location.address == '410 S State St'
-
-
-def fix_wrong_package_address(package_id, new_address):
-    """
-    Complexity: Big O(n^2)
-    Fix the wrong package address
-    update the deliveries the package is associated with
-    """
-    print(f'correcting wrong address for package {package_id}')
-    correct_location = get_location_by_address(new_address)
-    delivery_with_wrong_location = get_delivery_from_package_id(package_id)
-    package_with_wrong_location = get_package_by_id(package_id)
-    delivery_with_wrong_location.remove_package(package_with_wrong_location)
-    delivery_with_correct_location = get_delivery_from_address(new_address)
-    package_with_correct_address = package_with_wrong_location.update_location(correct_location)
-    delivery_with_correct_location.add_package(package_with_correct_address)
 
 
 if __name__ == "__main__":

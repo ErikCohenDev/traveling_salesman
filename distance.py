@@ -46,7 +46,7 @@ def get_closest_next_location(current_address, pending_deliveries):
     return distance_to_next_location
 
 
-def get_miles_of_route(starting_location: Location, delivery_list, return_to_depot=False):
+def get_miles_of_delivery_route(starting_location: Location, delivery_list, return_to_depot=False):
     """
     Complexity: Big O(n)
     ### Parameters
@@ -68,5 +68,27 @@ def get_miles_of_route(starting_location: Location, delivery_list, return_to_dep
         total_miles += new_miles
     if return_to_depot:
         return_to_depot_distance = get_distance(delivery_list[-1].location.address, starting_location.address)
+        total_miles += return_to_depot_distance
+    return total_miles
+
+
+def get_miles_of_location_route(location_list, return_to_depot=False):
+    """
+    Complexity: Big O(n)
+    ### Parameters
+    1. location: List[Location]
+        - the location list for the route
+    ### Returns
+    - number
+        - the number of miles that route sums up to
+    """
+    total_miles = 0
+    for index, location in enumerate(location_list):
+        if index == 0:
+            continue
+        new_miles = get_distance(location_list[index - 1].address, location.address)
+        total_miles += new_miles
+    if return_to_depot:
+        return_to_depot_distance = get_distance(location_list[-1].address, cfg.starting_location.address)
         total_miles += return_to_depot_distance
     return total_miles

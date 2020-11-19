@@ -1,3 +1,4 @@
+from distance import get_distance
 from package import get_packages_with_unassigned_trucks
 from delivery import get_deliveries_with_unassigned_trucks
 import config as cfg
@@ -75,9 +76,9 @@ def print_delivery_table(deliveries_list):
     Complexity: Big O(n^2)
     Print a Table which lists the id, address, truck assigned, packages, and deadline of each delivery
     """
-    print("_______________________________________________________________________________________")
-    print("____________________________DELIVERIES_________________________________________________")
-    print("id | Address                                | Truck      | packages | deadline | ETA ")
+    print("__________________________________________________________________________________________")
+    print("____________________________DELIVERIES____________________________________________________")
+    print("id | Address                                | Truck      | packages | deadline | ETA      ")
     for delivery in deliveries_list:
         # Pad the strings to take the same amount of space
         delivery_id = "{:<2}".format(delivery.id)
@@ -89,7 +90,7 @@ def print_delivery_table(deliveries_list):
         )
         packages = "{:<8}".format(','.join([str(package.id) for package in delivery.packages]))
         delivery_deadline = delivery.earliest_deadline()
-        delivery_ETA = delivery.ETA
+        delivery_ETA = "{:<8}".format(str(delivery.ETA))
         print(
             f"{delivery_id} | {delivery_address} | {delivery_truck} | {packages} | {delivery_deadline} | {delivery_ETA}"
         )
@@ -101,19 +102,25 @@ def print_truck_table():
     Complexity: Big O(n^2)
     Print a Table which lists the id, current location, deliveries, packages of each truck
     """
-    print("_____________________________________________________________________")
-    print("______________________________Trucks_________________________________")
-    print("id | Current Location                       | Deliveries | Packages |")
+    print("____________________________________________________________________________")
+    print("___________________________________Trucks___________________________________")
+    print("id | Current Location                       | Deliveries | Packages | Miles|")
+    total_miles = 0
     for truck in cfg.trucks:
         # Pad the strings to take the same amount of space
         truck_id = "{:<2}".format(truck.id)
         truck_location = "{:<38}".format(truck.route._current_location.address)
         deliveries_assigned = "{:<10}".format(len(truck.route.deliveries))
         packages_assigned = "{:<8}".format(sum(len(delivery.packages) for delivery in truck.route.deliveries))
+        miles = round(truck.route.get_miles(), 2)
+        if truck.id == 2:
+            miles += get_distance(truck.route._route[-1].address, cfg.starting_location.address)
+        total_miles += miles
         print(
-            f"{truck_id} | {truck_location} | {deliveries_assigned} | {packages_assigned} |"
+            f"{truck_id} | {truck_location} | {deliveries_assigned} | {packages_assigned} | {miles} |"
         )
-    print("_____________________________________________________________________")
+    print(f"_________________________________________________________Total Miles: {round(total_miles,2)} |")
+    print("____________________________________________________________________________")
 
 
 def print_route_table():

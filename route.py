@@ -3,7 +3,8 @@ from location import Location
 import config as cfg
 from distance import (
     get_distance,
-    get_miles_of_route,
+    get_miles_of_delivery_route,
+    get_miles_of_location_route
 )
 from delivery import Delivery
 
@@ -50,7 +51,7 @@ class Route:
         Complexity: Big O(n)
         Get distance of miles of traveling the complete route
         """
-        return get_miles_of_route(self.starting_location, self.deliveries)
+        return get_miles_of_delivery_route(self.starting_location, self.deliveries)
 
     def add_delivery(self, truck_id, delivery, add_index):
         """
@@ -89,15 +90,8 @@ class Route:
         """
         if not self.get_next_delivery():
             return 0
-        current_location = self._current_location
-        current_location_idx = self._route.index(current_location)
-        miles_left = 0
-        for loc_idx, location in enumerate(self._route[current_location_idx:]):
-            try:
-                miles_left += get_distance(location.address, self._route[loc_idx + 1].address)
-            except IndexError:
-                return round(miles_left, 2)
-        return round(miles_left, 2)
+        current_location_idx = self._route.index(self._current_location)
+        return get_miles_of_location_route(self._route[current_location_idx:])
 
     def added_distance(self, delivery_start_time, delivery_to_measure: Delivery):
         """
@@ -115,7 +109,7 @@ class Route:
         for index in range(0, len(self.deliveries) + 1):
             deliveries_copy = self.deliveries.copy()
             deliveries_copy.insert(index, delivery_to_measure)
-            added_distance_for_delivery = get_miles_of_route(self.starting_location, deliveries_copy)
+            added_distance_for_delivery = get_miles_of_delivery_route(self.starting_location, deliveries_copy)
             checks_pass = check_all_deliveries_arrive_by_deadline(delivery_start_time, deliveries_copy)
             if checks_pass is False:
                 continue
@@ -218,22 +212,39 @@ class Route:
         Complexity: Big O(n)
         Move the route forward the amount of the new miles driven.
         """
-        miles_driven_acc = self._miles_driven
-        self._miles_driven += new_miles_driven
+        print(f'have driven a total of {self._miles_driven} miles')
+        # if there is no next delivery we have completed our route
+        if self.get_next_delivery() is None:
+            self._current_location = self.deliveries[-1].location
+            self.route_complete = True
 
         while self.get_next_delivery():
+            miles_driven_to_current_location = self.get_miles_to_location(self._current_location)
+
+            # if we are not in the starting point
+            unused_miles_driven = self._miles_driven - miles_driven_to_current_location
+
+            print(f'driven {miles_driven_to_current_location} miles from starting point')
+            # Get the next delivery and the distance from here to there.
             next_delivery = self.get_next_delivery()
             drive_distance = get_distance(self._current_location.address, next_delivery.location.address)
-            if miles_driven_acc + drive_distance > self._miles_driven:
+
+            # if we drove less miles than the distance to the next delivery
+            # Break since we haven't reached our destination yet
+            if self._miles_driven < miles_driven_to_current_location + drive_distance:
                 break
-            miles_driven_acc += drive_distance
-            timestamp = self.miles_traveled_time_delivered(miles_driven_acc)
+
+            total_miles_to_next_location = miles_driven_to_current_location + drive_distance
+            timestamp = self.miles_traveled_time_delivered(total_miles_to_next_location)
             next_delivery.mark_as_delivered(timestamp)
             self._current_location = next_delivery.location
+            miles_driven_to_current_location += drive_distance
 
         if self.get_next_delivery() is None:
             self._current_location = self.deliveries[-1].location
             self.route_complete = True
+
+        self._miles_driven += new_miles_driven
 
 
 def check_all_deliveries_arrive_by_deadline(start_time, delivery_list):
@@ -246,7 +257,10 @@ def check_all_deliveries_arrive_by_deadline(start_time, delivery_list):
 
 
 def get_ETA(departure_time, route):
-    miles_of_route = get_miles_of_route(cfg.starting_location, route)
+    """
+    Complexity: Big O(n)
+    """
+    miles_of_route = get_miles_of_delivery_route(cfg.starting_location, route)
     minutes_of_route = miles_to_minutes(miles_of_route)
     return datetime.combine(datetime.today(), departure_time) + timedelta(minutes=minutes_of_route)
 
