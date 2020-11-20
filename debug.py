@@ -1,6 +1,6 @@
 from distance import get_distance
 from package import get_packages_with_unassigned_trucks
-from delivery import get_deliveries_with_unassigned_trucks
+from delivery import get_deliveries_with_unassigned_trucks, get_delivery_from_package_id
 import config as cfg
 
 
@@ -54,7 +54,7 @@ def print_package_table():
     """
     print("___________________________________________________________________")
     print("____________________________PACKAGES_______________________________")
-    print("id | Address                                | Truck      | Deadline | Notes ")
+    print("id | Address                                | Truck      | Deadline |  Notes               | Time Delivered ")
     for package in cfg.packages:
         # Pad the strings to take the same amount of space
         package_id = "{:<2}".format(package.id)
@@ -65,9 +65,18 @@ def print_package_table():
             else "unassigned"
         )
         package_deadline = package.deadline.strftime("%H:%M %p")
-        package_notes = package.notes if package.notes is not False else "N/A"
+        package_notes = "{:<20}".format(package.notes) if package.notes is not False else "{:<20}".format("N/A")
+        delivery = get_delivery_from_package_id(package.id)
+        if delivery is not None:
+            delivery_time = (
+                delivery.delivered_time
+                if delivery.delivered_time is not None
+                else "undelivered"
+            )
+        else:
+            delivery_time = "undelivered"
         print(
-            f"{package_id} | {package_address} | {package_truck} | {package_deadline} | {package_notes}"
+            f"{package_id} | {package_address} | {package_truck} | {package_deadline} | {package_notes} | {delivery_time} "
         )
 
 

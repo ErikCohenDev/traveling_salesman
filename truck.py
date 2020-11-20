@@ -146,6 +146,7 @@ def distribute_deliveries_to_trucks():
 
         closest_truck.assign_delivery(delivery, route_add_index)
 
+
 def assign_deliveries_truck_2():
     """
     Complexity: Big O(n)
