@@ -1,3 +1,7 @@
+"""
+Erik Cohen
+Student #000915169
+"""
 import config as cfg
 
 

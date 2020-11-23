@@ -1,3 +1,9 @@
+"""
+Erik Cohen
+Student #000915169
+"""
+
+
 class HashTableIterator:
     """
     The HashTableIterator Class helps create an iterator object for

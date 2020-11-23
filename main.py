@@ -1,3 +1,7 @@
+"""
+Erik Cohen
+Student #000915169
+"""
 from cli import CLI
 from csv_import import load_data
 from delivery import create_deliveries

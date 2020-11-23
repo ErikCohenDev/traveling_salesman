@@ -1,3 +1,7 @@
+"""
+Erik Cohen
+Student #000915169
+"""
 from datetime import datetime, timedelta
 from location import Location
 import config as cfg

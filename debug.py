@@ -1,3 +1,7 @@
+"""
+Erik Cohen
+Student #000915169
+"""
 from distance import get_distance
 from package import get_packages_with_unassigned_trucks
 from delivery import get_deliveries_with_unassigned_trucks, get_delivery_from_package_id

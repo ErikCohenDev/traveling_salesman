@@ -1,3 +1,7 @@
+"""
+Erik Cohen
+Student #000915169
+"""
 from datetime import datetime
 from package import get_package_by_id
 from location import get_location_by_address

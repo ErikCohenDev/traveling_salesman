@@ -1,3 +1,7 @@
+"""
+Erik Cohen
+Student #000915169
+"""
 from datetime import datetime
 from truck import Truck
 
